@@ -6,7 +6,7 @@
 
     <groupId>net.vkits.platform</groupId>
     <artifactId>lina</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -30,5 +30,19 @@
             <version>2.5</version>
         </dependency>
     </dependencies>
+
+
+    <distributionManagement>
+        <repository>
+            <id>nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://nexus.wezebra.com/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <name>Nexus Snapshot Repository</name>
+            <url>http://nexus.wezebra.com/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

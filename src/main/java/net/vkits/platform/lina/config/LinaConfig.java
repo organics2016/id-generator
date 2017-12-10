@@ -1,4 +1,4 @@
-package net.vkits.platform.lina.dto;
+package net.vkits.platform.lina.config;
 
 
 import net.vkits.platform.lina.rule.Rule;

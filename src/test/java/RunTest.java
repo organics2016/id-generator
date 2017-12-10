@@ -1,7 +1,8 @@
 import net.vkits.platform.lina.LinaConsole;
 import net.vkits.platform.lina.LinaServer;
-import net.vkits.platform.lina.dao.impl.DefaultCodeDao;
-import net.vkits.platform.lina.dto.LinaConfig;
+import net.vkits.platform.lina.config.LinaConfig;
+import net.vkits.platform.lina.dao.impl.RedisCodeDao;
+import net.vkits.platform.lina.redis.JedisConfig;
 import net.vkits.platform.lina.rule.impl.LinaRule;
 
 import java.util.ArrayList;
@@ -24,12 +25,12 @@ public class RunTest {
         LinaConsole c = LinaConsole.getInstance().init(
                 new LinaConfig("ZCKP", new LinaRule().start(100).autoComple(true).prefix("SQ").maxBit(10)),
                 new LinaConfig("ZCZY", new LinaRule().start(10000).autoComple(true).maxBit(10)))
-                .boot(new DefaultCodeDao(classpath));
+                .boot(new RedisCodeDao(new JedisConfig("192.168.0.99", 6379, "123456").getJedisPool()));
 
         test_3();
     }
 
-    public static void test_3(){
+    public static void test_3() {
         String xxx = LinaServer.nextCode("ZCKP");
 
         System.out.println(xxx);

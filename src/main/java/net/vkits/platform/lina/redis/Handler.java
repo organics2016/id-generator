@@ -7,6 +7,6 @@ package net.vkits.platform.lina.redis;
  */
 
 
-public interface Handler<E> {
-    void handler(E event);
+public interface Handler<E, R> {
+    R handler(E event);
 }

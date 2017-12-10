@@ -1,12 +1,10 @@
 package net.vkits.platform.lina;
 
 
+import net.vkits.platform.lina.config.LinaConfig;
+import net.vkits.platform.lina.config.RuleConfig;
 import net.vkits.platform.lina.dao.CodeDao;
-import net.vkits.platform.lina.dto.LinaConfig;
 import net.vkits.platform.lina.rule.Rule;
-import net.vkits.platform.lina.service.Consumer;
-import net.vkits.platform.lina.service.Producer;
-import net.vkits.platform.lina.service.RuleConfig;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -29,19 +27,11 @@ public class LinaConsole {
 
     private static boolean boot = false;
 
-    private RuleConfig ruleConfig;
-
-    private Consumer consumer;
-
-    private Producer producer;
+    private final RuleConfig ruleConfig;
 
 
     private LinaConsole() {
         ruleConfig = RuleConfig.getInstance();
-
-        consumer = Consumer.getInstance();
-
-        producer = Producer.getInstance();
     }
 
 
@@ -62,8 +52,6 @@ public class LinaConsole {
 
         ruleConfig.init(map);
 
-        consumer.init(ruleConfig.getAllGroupId());
-
         init = true;
 
         return this;
@@ -76,7 +64,13 @@ public class LinaConsole {
         if (!init)
             throw new RuntimeException("LinaServer is not init");
 
-        producer.init(dao).start();
+        ruleConfig.getRuleMap().forEach((groupId, rule) -> {
+            if (!dao.exists(groupId)) {
+                dao.addCodeGroup(groupId, rule.getStart());
+            }
+        });
+
+        LinaServer.setDao(dao);
 
         boot = true;
 
@@ -88,10 +82,6 @@ public class LinaConsole {
     }
 
     public static boolean isInit() {
-        return init;
-    }
-
-    public static boolean isBoot() {
-        return boot;
+        return init && boot;
     }
 }

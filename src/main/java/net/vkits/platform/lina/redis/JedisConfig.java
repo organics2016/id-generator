@@ -41,6 +41,13 @@ public class JedisConfig {
         this.jedisPool = new JedisPool(config, host, port);
     }
 
+
+    public JedisConfig(String host, int port, String password) {
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setTestOnBorrow(true);
+        this.jedisPool = new JedisPool(config, host, port, 10000, password);
+    }
+
     public JedisPool getJedisPool() {
         return jedisPool;
     }

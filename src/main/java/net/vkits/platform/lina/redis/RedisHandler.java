@@ -7,5 +7,5 @@ import redis.clients.jedis.Jedis;
  */
 public interface RedisHandler {
 
-    void redisHandler(Handler<Jedis> jedisHandler);
+    <R> R redisHandler(Handler<Jedis, R> jedisHandler);
 }

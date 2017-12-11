@@ -9,6 +9,15 @@ public class JedisConfig {
     private final JedisPool jedisPool;
 
     public JedisConfig(String host, int port) {
+        this.jedisPool = new JedisPool(this.getJedisPoolConfig(), host, port);
+    }
+
+
+    public JedisConfig(String host, int port, String password) {
+        this.jedisPool = new JedisPool(this.getJedisPoolConfig(), host, port, 10000, password);
+    }
+
+    private JedisPoolConfig getJedisPoolConfig() {
         JedisPoolConfig config = new JedisPoolConfig();
         //连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true
 //        redis.setBlockWhenExhausted(true);
@@ -38,14 +47,7 @@ public class JedisConfig {
 //        redis.setTestWhileIdle(false);
         //逐出扫描的时间间隔(毫秒) 如果为负数,则不运行逐出线程, 默认-1
 //        redis.setTimeBetweenEvictionRunsMillis(-1);
-        this.jedisPool = new JedisPool(config, host, port);
-    }
-
-
-    public JedisConfig(String host, int port, String password) {
-        JedisPoolConfig config = new JedisPoolConfig();
-        config.setTestOnBorrow(true);
-        this.jedisPool = new JedisPool(config, host, port, 10000, password);
+        return config;
     }
 
     public JedisPool getJedisPool() {

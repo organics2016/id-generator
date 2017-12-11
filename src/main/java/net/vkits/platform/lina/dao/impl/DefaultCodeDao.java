@@ -107,7 +107,7 @@ public class DefaultCodeDao implements CodeDao {
         }
     }
 
-    public void start() {
+    private void start() {
 
         new Thread(() -> {
             try {

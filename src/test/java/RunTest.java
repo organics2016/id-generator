@@ -26,9 +26,10 @@ public class RunTest {
         LinaConsole c = LinaConsole.getInstance().init(
                 new LinaConfig("ZCKP", new LinaRule().start(100).autoComple(true).prefix("SQ").maxBit(10)),
                 new LinaConfig("ZCZY", new LinaRule().start(10000).autoComple(true).maxBit(10)))
+//                .boot(new RedisCodeDao(new JedisConfig("192.168.0.99", 6379, "123456").getJedisPool()))
                 .boot(new DefaultCodeDao(classpath));
 
-        test_1();
+        test_3();
     }
 
     public static void test_3() {

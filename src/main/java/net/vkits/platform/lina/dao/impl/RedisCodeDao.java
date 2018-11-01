@@ -3,8 +3,11 @@ package net.vkits.platform.lina.dao.impl;
 import net.vkits.platform.lina.dao.CodeDao;
 import net.vkits.platform.lina.redis.Handler;
 import net.vkits.platform.lina.redis.RedisHandler;
+import net.vkits.platform.lina.rule.Rule;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.Map;
 
 public class RedisCodeDao implements RedisHandler, CodeDao {
 
@@ -25,6 +28,15 @@ public class RedisCodeDao implements RedisHandler, CodeDao {
             if (jedis != null)
                 jedis.close();
         }
+    }
+
+    @Override
+    public void init(Map<String, Rule> ruleMap) {
+        ruleMap.forEach((groupId, rule) -> {
+            if (!this.exists(groupId)) {
+                this.addCodeGroup(groupId, rule.getStart());
+            }
+        });
     }
 
     @Override

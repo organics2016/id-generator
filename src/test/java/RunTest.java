@@ -1,13 +1,8 @@
 import net.vkits.platform.lina.LinaConsole;
 import net.vkits.platform.lina.LinaServer;
 import net.vkits.platform.lina.config.LinaConfig;
-import net.vkits.platform.lina.dao.impl.DefaultCodeDao;
-import net.vkits.platform.lina.dao.impl.RedisCodeDao;
-import net.vkits.platform.lina.redis.JedisConfig;
-import net.vkits.platform.lina.rule.impl.LinaRule;
-
-import java.util.ArrayList;
-import java.util.List;
+import net.vkits.platform.lina.dao.impl.TimeStampCodeDao;
+import net.vkits.platform.lina.rule.impl.TimeStampRule;
 
 /**
  * Created by 王汗超 on 2017/4/6.
@@ -17,19 +12,26 @@ public class RunTest {
 
     public static void main(String[] args) {
 
-        List<LinaConfig> l = new ArrayList<>();
+//        List<LinaConfig> l = new ArrayList<>();
+//
+//        String classpath = RunTest.class.getClassLoader().getResource("").getFile();
+//
+//        // ZCKP00001 格式固定可以按格式固定处理
+//        // 分类编码 1001  字典编码 00001  result 1001 + 00001
+//        LinaConsole c = new LinaConsole().init(
+//                new LinaConfig("ZCKP", new LinaRule().start(10000).autoComple(true).maxBit(10)),
+//                new LinaConfig("ZCZY", new LinaRule().start(10000).autoComple(true).maxBit(10)))
+////                .boot(new RedisCodeDao(new JedisConfig("192.168.0.99", 6379, "123456").getJedisPool()))
+//                .boot(new DefaultCodeDao(classpath));
 
-        String classpath = RunTest.class.getClassLoader().getResource("").getFile();
 
-        // ZCKP00001 格式固定可以按格式固定处理
-        // 分类编码 1001  字典编码 00001  result 1001 + 00001
-        LinaConsole c = LinaConsole.getInstance().init(
-                new LinaConfig("ZCKP", new LinaRule().start(100).autoComple(true).prefix("SQ").maxBit(10)),
-                new LinaConfig("ZCZY", new LinaRule().start(10000).autoComple(true).maxBit(10)))
-//                .boot(new RedisCodeDao(new JedisConfig("192.168.0.99", 6379, "123456").getJedisPool()))
-                .boot(new DefaultCodeDao(classpath));
+        new LinaConsole().init(
+                new LinaConfig("ZCKP", new TimeStampRule()),
+                new LinaConfig("ZCZY", new TimeStampRule())
+        ).boot(new TimeStampCodeDao());
 
-        test_3();
+
+        test_1();
     }
 
     public static void test_3() {
@@ -83,7 +85,7 @@ public class RunTest {
                         s1[1] = xxx;
                     }
 
-                    System.out.println(xxx);
+                    System.out.println("T1 :" + xxx);
 
                     if (s1[1].equals(s1[0])) {
                         throw new RuntimeException("!!!!");
@@ -113,7 +115,7 @@ public class RunTest {
 
                 while (true) {
 
-                    String xxx = LinaServer.nextCode("ZCZY");
+                    String xxx = LinaServer.nextCode("ZCKP");
                     if (i == 0) {
                         s1[1] = xxx;
                         i = 1;
@@ -123,13 +125,13 @@ public class RunTest {
                         s1[1] = xxx;
                     }
 
-                    System.out.println(xxx);
+                    System.out.println("T2 :" + xxx);
 
                     if (s1[1].equals(s1[0])) {
                         throw new RuntimeException("!!!!");
                     }
 
-//                    Thread.sleep(10);
+                    Thread.sleep(10);
                 }
 
             } catch (Exception e) {

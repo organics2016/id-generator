@@ -1,11 +1,18 @@
 package net.vkits.platform.lina.dao;
 
+import net.vkits.platform.lina.rule.Rule;
+
+import java.util.Map;
+
 /**
  * Created by 王汗超 on 2017/4/5.
  * <p>
  * 编码持久化层
  */
 public interface CodeDao {
+
+
+    void init(Map<String, Rule> ruleMap);
 
     /**
      * 获取指定分组的Code值

@@ -1,11 +1,9 @@
 package net.vkits.platform.lina.dao.impl;
 
 
-import net.vkits.platform.lina.config.RuleConfig;
 import net.vkits.platform.lina.dao.CodeDao;
+import net.vkits.platform.lina.rule.Rule;
 import org.apache.commons.io.input.ReversedLinesFileReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -19,37 +17,37 @@ import java.util.concurrent.TransferQueue;
  */
 public class DefaultCodeDao implements CodeDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultCodeDao.class);
 
     private final Map<String, BufferedWriter> bwMap = new ConcurrentHashMap<>();
 
     private final Map<String, File> fileMap = new ConcurrentHashMap<>();
 
-    private final RuleConfig ruleConfig = RuleConfig.getInstance();
-
     private final Map<String, TransferQueue<Long>> codeQueue = new ConcurrentHashMap<>();
-
-    // Code一旦被消费，会进入这个队列，出队时根据上一个已被消费Code生成新的Code
-    private final TransferQueue<Produce> produceQueue = new LinkedTransferQueue<>();
 
     private final File file;
 
+    private Map<String, Rule> ruleMap;
+
     public DefaultCodeDao(String path) {
-        this.file = new File(new File(path), "maxcode");
-        this.init();
+        this(new File(path));
     }
 
     public DefaultCodeDao(File file) {
         this.file = new File(file, "maxcode");
-        this.init();
     }
 
+    @Override
+    public void init(Map<String, Rule> ruleMap) {
+        this.ruleMap = ruleMap;
+
+        this.init();
+    }
 
     private void init() {
         if (!this.file.isDirectory())
             this.file.mkdirs();
 
-        ruleConfig.getRuleMap().forEach((groupId, rule) -> {
+        this.ruleMap.forEach((groupId, rule) -> {
             try {
                 codeQueue.put(groupId, new LinkedTransferQueue<>());
 
@@ -61,20 +59,18 @@ public class DefaultCodeDao implements CodeDao {
                 this.bwMap.put(groupId, bw);
                 this.fileMap.put(groupId, file);
 
-                long maxCode = this.getCode(groupId);
-                if (maxCode <= 0) {
-                    maxCode = rule.getStart();
-                } else {
-                    maxCode = rule.next(maxCode);
+
+                if (!this.exists(groupId)) {
+                    this.addCodeGroup(groupId, rule.getStart());
                 }
+
+                long maxCode = rule.next(this.getCode(groupId));
 
                 codeQueue.get(groupId).put(maxCode);
             } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         });
-
-        this.start();
     }
 
 
@@ -100,29 +96,11 @@ public class DefaultCodeDao implements CodeDao {
             bw.newLine();
             bw.flush();
 
-            produceQueue.put(new Produce(groupId, code));
+            codeQueue.get(groupId).put(this.ruleMap.get(groupId).next(code));
             return code;
         } catch (InterruptedException | IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private void start() {
-
-        new Thread(() -> {
-            try {
-                while (true) {
-
-                    Produce produce = produceQueue.take();
-                    String groupId = produce.getGroupId();
-                    long code = produce.getCode();
-
-                    codeQueue.get(groupId).put(this.ruleConfig.getRule(groupId).next(code));
-                }
-            } catch (InterruptedException e) {
-                logger.error("error :", e);
-            }
-        }).start();
     }
 
     @Override
@@ -141,25 +119,5 @@ public class DefaultCodeDao implements CodeDao {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-}
-
-class Produce {
-
-    private final String groupId;
-
-    private final long code;
-
-    public Produce(String groupId, long code) {
-        this.groupId = groupId;
-        this.code = code;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public long getCode() {
-        return code;
     }
 }

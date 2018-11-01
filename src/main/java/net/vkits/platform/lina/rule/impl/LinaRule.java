@@ -41,31 +41,8 @@ public class LinaRule implements Rule {
 
 
     @Override
-    public String produce(String maxCode) {
-        return this.format(this.next(this.parse(maxCode)));
-    }
-
-    @Override
     public long next(long maxCode) {
         return maxCode + (long) this.step;
-    }
-
-
-    @Override
-    public long parse(String code) {
-        if (code == null)
-            return -1;
-        // LINAAABB000001XXHH
-        // 000001
-        // S1
-        int start = this.prefix.length();
-        int end;
-        if (this.autoComple)
-            end = start + this.maxBit;
-        else
-            end = code.length() - this.postfix.length();
-
-        return Long.valueOf(code.substring(start, end));
     }
 
     @Override

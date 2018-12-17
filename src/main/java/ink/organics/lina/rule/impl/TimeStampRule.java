@@ -1,6 +1,6 @@
-package net.vkits.platform.lina.rule.impl;
+package ink.organics.lina.rule.impl;
 
-import net.vkits.platform.lina.rule.Rule;
+import ink.organics.lina.rule.Rule;
 
 import java.time.Instant;
 import java.time.ZoneId;

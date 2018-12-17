@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>net.vkits.platform</groupId>
+    <groupId>ink.organics.lina</groupId>
     <artifactId>lina</artifactId>
     <version>2.1</version>
 

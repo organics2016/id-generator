@@ -1,8 +1,8 @@
-import net.vkits.platform.lina.LinaConsole;
-import net.vkits.platform.lina.LinaServer;
-import net.vkits.platform.lina.config.LinaConfig;
-import net.vkits.platform.lina.dao.impl.TimeStampCodeDao;
-import net.vkits.platform.lina.rule.impl.TimeStampRule;
+import ink.organics.lina.LinaConsole;
+import ink.organics.lina.LinaServer;
+import ink.organics.lina.config.LinaConfig;
+import ink.organics.lina.dao.impl.TimeStampCodeDao;
+import ink.organics.lina.rule.impl.TimeStampRule;
 
 /**
  * Created by 王汗超 on 2017/4/6.

@@ -1,4 +1,4 @@
-package net.vkits.platform.lina.rule.impl;
+package ink.organics.lina.rule.impl;
 
 /**
  * Created by 王汗超 on 2017/4/1.

@@ -1,9 +1,9 @@
-package net.vkits.platform.lina.dao.impl;
+package ink.organics.lina.dao.impl;
 
-import net.vkits.platform.lina.dao.CodeDao;
-import net.vkits.platform.lina.redis.Handler;
-import net.vkits.platform.lina.redis.RedisHandler;
-import net.vkits.platform.lina.rule.Rule;
+import ink.organics.lina.dao.CodeDao;
+import ink.organics.lina.redis.Handler;
+import ink.organics.lina.redis.RedisHandler;
+import ink.organics.lina.rule.Rule;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 

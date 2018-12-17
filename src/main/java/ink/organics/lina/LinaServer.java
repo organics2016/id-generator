@@ -1,4 +1,4 @@
-package net.vkits.platform.lina;
+package ink.organics.lina;
 
 
 /**

@@ -1,4 +1,4 @@
-package net.vkits.platform.lina.redis;
+package ink.organics.lina.redis;
 
 /**
  * Created by wanghc on 2016/7/19.

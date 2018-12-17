@@ -1,9 +1,9 @@
-package net.vkits.platform.lina;
+package ink.organics.lina;
 
 
-import net.vkits.platform.lina.config.LinaConfig;
-import net.vkits.platform.lina.dao.CodeDao;
-import net.vkits.platform.lina.rule.Rule;
+import ink.organics.lina.config.LinaConfig;
+import ink.organics.lina.dao.CodeDao;
+import ink.organics.lina.rule.Rule;
 
 import java.util.Arrays;
 import java.util.Map;

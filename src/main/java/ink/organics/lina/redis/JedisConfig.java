@@ -1,4 +1,4 @@
-package net.vkits.platform.lina.redis;
+package ink.organics.lina.redis;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

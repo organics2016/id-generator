@@ -1,4 +1,4 @@
-package net.vkits.platform.lina.rule;
+package ink.organics.lina.rule;
 
 /**
  * Created by 王汗超 on 2017/4/5.

@@ -1,7 +1,7 @@
-package net.vkits.platform.lina.rule.impl;
+package ink.organics.lina.rule.impl;
 
 
-import net.vkits.platform.lina.rule.Rule;
+import ink.organics.lina.rule.Rule;
 
 /**
  * Created by 王汗超 on 2017/4/1.

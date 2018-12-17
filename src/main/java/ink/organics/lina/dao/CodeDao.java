@@ -1,6 +1,6 @@
-package net.vkits.platform.lina.dao;
+package ink.organics.lina.dao;
 
-import net.vkits.platform.lina.rule.Rule;
+import ink.organics.lina.rule.Rule;
 
 import java.util.Map;
 

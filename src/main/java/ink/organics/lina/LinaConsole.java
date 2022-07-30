@@ -2,7 +2,7 @@ package ink.organics.lina;
 
 
 import ink.organics.lina.config.LinaConfig;
-import ink.organics.lina.dao.CodeDao;
+import ink.organics.lina.id.IDs;
 import ink.organics.lina.rule.Rule;
 
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public class LinaConsole {
 
     private Map<String, Rule> ruleMap;
 
-    private CodeDao codeDao;
+    private IDs ids;
 
 
     public LinaConsole init(LinaConfig... linaConfigs) {
@@ -40,7 +40,7 @@ public class LinaConsole {
         return this;
     }
 
-    public LinaConsole boot(CodeDao dao) {
+    public LinaConsole boot(IDs dao) {
 
         if (!init)
             throw new RuntimeException("LinaServer is not init");
@@ -48,9 +48,9 @@ public class LinaConsole {
         if (boot)
             return this;
 
-        this.codeDao = dao;
+        this.ids = dao;
 
-        this.codeDao.init(ruleMap);
+        this.ids.init(ruleMap);
 
         LinaServer.setConsole(this);
 
@@ -71,7 +71,7 @@ public class LinaConsole {
         return ruleMap;
     }
 
-    public CodeDao getCodeDao() {
-        return codeDao;
+    public IDs getCodeDao() {
+        return ids;
     }
 }

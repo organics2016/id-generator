@@ -19,7 +19,7 @@ public class LinaServer {
         if (!console.isInit())
             throw new RuntimeException("LinaServer is not init");
 
-        long code = console.getCodeDao().nextCode(groupId);
+        long code = console.getCodeDao().next(groupId);
         return console.getRuleMap().get(groupId).format(code);
     }
 }

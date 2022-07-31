@@ -18,7 +18,7 @@ Support Java8 and last
      
 ## A simple example
 
-- Initialize some rule during program loading. like in spring
+- Initialize some DecoratorRule during program loading. like in spring
 
         @Bean
         public LinaConsole linaConsole() {

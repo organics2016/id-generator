@@ -1,140 +1,94 @@
-import ink.organics.lina.LinaServer;
+import ink.organics.lina.IDGenerator;
+import ink.organics.lina.IDGeneratorManager;
+import ink.organics.lina.decorator.Decorator;
+import ink.organics.lina.decorator.impl.StringDecoratorRule;
+import ink.organics.lina.generator.impl.SnowflakeGenerator;
+import org.junit.jupiter.api.Test;
 
-/**
- * Created by 王汗超 on 2017/4/6.
- */
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+
 public class RunTest {
 
+    @Test
+    public void test() {
+        System.out.println(String.format("%064d", 41111));
+    }
 
-    public static void main(String[] args) {
+    @Test
+    public void test1() {
 
-//        List<LinaConfig> l = new ArrayList<>();
-//
-//        String classpath = RunTest.class.getClassLoader().getResource("").getFile();
-//
-//        // ZCKP00001 格式固定可以按格式固定处理
-//        // 分类编码 1001  字典编码 00001  result 1001 + 00001
-//        LinaConsole c = new LinaConsole().init(
-//                new LinaConfig("ZCKP", new LinaRule().start(10000).autoComple(true).maxBit(10)),
-//                new LinaConfig("ZCZY", new LinaRule().start(10000).autoComple(true).maxBit(10)))
+//        IDGeneratorManager.(
+//                new LinaConfig("ZCKP", new StringDecoratorRule().start(10000).autoComple(true).maxBit(10)),
+//                new LinaConfig("ZCZY", new StringDecoratorRule().start(10000).autoComple(true).maxBit(10)))
 ////                .boot(new RedisCodeDao(new JedisConfig("192.168.0.99", 6379, "123456").getJedisPool()))
 //                .boot(new DefaultCodeDao(classpath));
 
+        IDGeneratorManager.getInstance().init(
+                Decorator.builder()
+                        .generatorId("ZCKP")
+                        .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
+                        .decoratorRule(StringDecoratorRule.builder().prefix("ZCKP").autoComplete(true).build())
+                        .build(),
+                Decorator.builder()
+                        .generatorId("ZCZY")
+                        .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
+                        .decoratorRule(StringDecoratorRule.builder().prefix("ZCZY").autoComplete(false).build())
+                        .build()
+        );
 
-//        new LinaConsole().init(
-//                new LinaConfig("ZCKP", new TimeStampRule()),
-//                new LinaConfig("ZCZY", new TimeStampRule())
-//        ).boot(new TimeStampIDs());
-
-
-        test_1();
-    }
-
-    public static void test_3() {
-        String xxx = LinaServer.nextCode("ZCKP");
+        String xxx = IDGenerator.nextToString("ZCKP");
 
         System.out.println(xxx);
 
-        String aaa = LinaServer.nextCode("ZCZY");
+        String aaa = IDGenerator.nextToString("ZCZY");
 
         System.out.println(aaa);
     }
 
-    public static void test_2() {
-        long start = System.currentTimeMillis();
-        for (int i = 0; i < 10000; i++) {
-//            UUID.randomUUID().toString();
-            String xxx = LinaServer.nextCode("ZCZY");
-            System.out.println(xxx);
+    public void test2() {
+        //        System.out.println(Long.toBinaryString(-1));
+//        System.out.println(Long.parseLong("0111111111111111111111111111111111111111111111111111111111111111", 2));
+//        System.out.println(Long.parseLong("011111111111111111111111111111111111111111", 2));
+//        System.out.println(Long.parseLong("01111111111", 2));
+//        System.out.println(Long.parseLong("0111111111111", 2));
+
+        SnowflakeGenerator snowflakes = SnowflakeGenerator.build("s6", List.of("s1", "s2", "s3", "s4", "s5", "s6"));
+        SnowflakeGenerator snowflakes2 = SnowflakeGenerator.build("s6", List.of("s1", "s2", "s3", "s4", "s5", "s6"));
+        SnowflakeGenerator snowflakes3 = SnowflakeGenerator.build("s6", List.of("s1", "s2", "s3", "s4", "s5", "s6"));
+        SnowflakeGenerator snowflakes4 = SnowflakeGenerator.build("s6", List.of("s1", "s2", "s3", "s4", "s5", "s6"));
+
+        final ExecutorService executor = Executors.newFixedThreadPool(12);
+
+        Map<Long, Object> map = new ConcurrentHashMap<>();
+
+        for (int t = 0; t < 100; t++) {
+
+            executor.submit(() -> {
+                long start = System.currentTimeMillis();
+                for (int i = 0; i < 100; i++) {
+                    map.put(snowflakes.next(), "");
+                }
+                long end = System.currentTimeMillis();
+                System.out.println(Thread.currentThread().getId() + " : " + (end - start));
+            });
+
         }
 
-        long end = System.currentTimeMillis();
+        try {
+            while (!executor.awaitTermination(30, TimeUnit.SECONDS)) {
+                executor.shutdown();
+                System.out.println(map.size() == (100 * 100));
 
-        System.out.println("ms : " + (end - start));
-    }
-
-
-    public static void test_1() {
-
-        new Thread(() -> {
-
-            try {
-
-                String[] s1 = new String[2];
-
-                int i = 0;
-
-                System.out.println("1 --->");
-
-                Thread.sleep(5000);
-
-
-                while (true) {
-
-                    String xxx = LinaServer.nextCode("ZCKP");
-                    if (i == 0) {
-                        s1[1] = xxx;
-                        i = 1;
-
-                    } else {
-                        s1[0] = s1[1];
-                        s1[1] = xxx;
-                    }
-
-                    System.out.println("T1 :" + xxx);
-
-                    if (s1[1].equals(s1[0])) {
-                        throw new RuntimeException("!!!!");
-                    }
-
-//                    Thread.sleep(5);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-
-        }).start();
-
-
-        new Thread(() -> {
-
-            try {
-
-                String[] s1 = new String[2];
-
-                int i = 0;
-
-                System.out.println("2 --->");
-
-                Thread.sleep(5000);
-
-                while (true) {
-
-                    String xxx = LinaServer.nextCode("ZCKP");
-                    if (i == 0) {
-                        s1[1] = xxx;
-                        i = 1;
-
-                    } else {
-                        s1[0] = s1[1];
-                        s1[1] = xxx;
-                    }
-
-                    System.out.println("T2 :" + xxx);
-
-                    if (s1[1].equals(s1[0])) {
-                        throw new RuntimeException("!!!!");
-                    }
-
-                    Thread.sleep(10);
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }).start();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }

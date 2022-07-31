@@ -38,7 +38,7 @@ public class RunTest {
                 Decorator.builder()
                         .generatorId("ZCZY")
                         .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
-                        .decoratorRule(StringDecoratorRule.builder().prefix("ZCZY").autoComplete(false).build())
+//                        .decoratorRule(StringDecoratorRule.builder().prefix("ZCZY").autoComplete(false).build())
                         .build()
         );
 
@@ -46,11 +46,12 @@ public class RunTest {
 
         System.out.println(xxx);
 
-        String aaa = IDGenerator.nextToString("ZCZY");
+        long aaa = IDGenerator.next("ZCZY");
 
         System.out.println(aaa);
     }
 
+    @Test
     public void test2() {
         //        System.out.println(Long.toBinaryString(-1));
 //        System.out.println(Long.parseLong("0111111111111111111111111111111111111111111111111111111111111111", 2));
@@ -89,6 +90,5 @@ public class RunTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
     }
 }

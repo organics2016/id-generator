@@ -48,11 +48,11 @@ public class SnowflakeGenerator implements Generator {
         List<String> all = allInstance.stream().distinct().sorted().toList();
 
         if (all.size() != allInstance.size()) {
-            throw new IllegalArgumentException("Data center id list has repeating!");
+            throw new IllegalArgumentException("Services identifier list has repeating!");
         }
 
         if (all.size() >= maxInstanceId) {
-            throw new IllegalArgumentException("Data center exceeds maximum!");
+            throw new IllegalArgumentException("Service identifier exceeds maximum!");
         }
 
         for (int i = 0; i < all.size(); i++) {
@@ -63,7 +63,7 @@ public class SnowflakeGenerator implements Generator {
             }
         }
 
-        throw new IllegalArgumentException("Not found " + currentInstance + "in the Data center");
+        throw new IllegalArgumentException("Not found " + currentInstance + "in the services identifier list!");
     }
 
     private static final Map<String, SnowflakeGenerator> INSTANCE_MAP = new ConcurrentHashMap<>();

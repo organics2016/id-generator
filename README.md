@@ -34,7 +34,8 @@ you can try it.
 </dependency>
 ```
 
-- Step2. Initialize a generator. like in the Spring
+- Step2. Initialize a generator. like in the Spring.
+  - Here you need to note that **the current service identifier must exist in all service lists.**
 
 ```java
 import ink.organics.idgenerator.generator.Generator;
@@ -46,7 +47,7 @@ public class ApplicationConfiguration {
     public Generator idGenerator() {
         return SnowflakeGenerator.build(
                 "server_1",      // Current service identifier
-                List.of("server_1", "server_2")); // All services identifier
+                List.of("server_1", "server_2")); // All services identifier.
     }
 }
 ```

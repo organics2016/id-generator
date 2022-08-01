@@ -68,7 +68,7 @@ public class SnowflakeGenerator implements Generator {
 
     private static final Map<String, SnowflakeGenerator> INSTANCE_MAP = new ConcurrentHashMap<>();
 
-    public static SnowflakeGenerator build(String currentInstance, Collection<String> allInstance) {
+    public static SnowflakeGenerator build(String currentInstance, List<String> allInstance) {
         return INSTANCE_MAP.computeIfAbsent(currentInstance, (key) -> new SnowflakeGenerator(key, allInstance));
     }
 

@@ -36,7 +36,6 @@ you can try it.
 ```
 
 - Step2. Initialize a generator. like in the Spring.
-  - Here you need to note that **the current service identifier must exist in all service lists.**
 
 ```java
 import ink.organics.idgenerator.generator.Generator;
@@ -49,6 +48,39 @@ public class ApplicationConfiguration {
         return SnowflakeGenerator.build(
                 "server_1",      // Current service identifier
                 List.of("server_1", "server_2")); // All services identifier.
+    }
+}
+```
+
+- You need to pay attention
+    - First parameter. **You need to ensure that the current service identifier is globally unique in your cluster. More
+      precisely, it is unique among all JVM processes in the cluster.**
+    - Second parameter. **You need to ensure that List's elements and the order of the elements are the same
+      in all services, and the maximum number cannot exceed 1023.**
+    - E.g The same code in different processes.
+
+```java
+
+@Configuration
+public class ApplicationConfiguration {
+    @Bean
+    public Generator idGenerator() {
+        return SnowflakeGenerator.build(
+                "server_1",
+                List.of("server_1", "server_2"));
+    }
+}
+```
+
+```java
+
+@Configuration
+public class ApplicationConfiguration {
+    @Bean
+    public Generator idGenerator() {
+        return SnowflakeGenerator.build(
+                "server_2",
+                List.of("server_1", "server_2"));
     }
 }
 ```

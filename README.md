@@ -104,3 +104,57 @@ public class SpringTest {
     }
 }
 ```
+
+## More Details
+
+- The numbers are so ugly. I need more meaningful ids.
+
+1. Initialize some decorator. like in the Spring.
+
+```java
+import ink.organics.idgenerator.IDGeneratorManager;
+import ink.organics.idgenerator.decorator.Decorator;
+import ink.organics.idgenerator.decorator.impl.StringDecoratorRule;
+import ink.organics.idgenerator.generator.Generator;
+import ink.organics.idgenerator.generator.impl.SnowflakeGenerator;
+
+@Configuration
+public class ApplicationConfiguration {
+
+    @Bean
+    public IDGeneratorManager idGeneratorManager() {
+        return IDGeneratorManager.getInstance().init(
+                Decorator.builder()     // Build a decorator
+                        .generatorId("generatorId_1")  //  The decorator need a id
+                        .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
+                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Set some rules
+                        .build(),
+
+                Decorator.builder()
+                        .generatorId("generatorId_2")
+                        .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
+                        .decoratorRule(StringDecoratorRule.builder().postfix("WWW").autoComplete(false).build())
+                        .build()
+        );
+    }
+}
+```
+
+2. Use it anywhere.
+
+```java
+import ink.organics.idgenerator.IDGenerator;
+import ink.organics.idgenerator.generator.Generator;
+
+@SpringBootTest
+public class SpringDemoTest {
+    @Test
+    public void test2() {
+        String generatorId_1 = IDGenerator.nextToString("generatorId_1");
+        assertThat(generatorId_1).startsWith("QQQ");
+
+        String generatorId_2 = IDGenerator.nextToString("generatorId_2");
+        assertThat(generatorId_2).endsWith("WWW");
+    }
+}
+```

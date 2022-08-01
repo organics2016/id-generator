@@ -28,7 +28,7 @@ public class FunctionTest {
         for (int t = 0; t < 100; t++) {
             executor.submit(() -> {
                 long start = System.currentTimeMillis();
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < 10000; i++) {
                     map.put(snowflakes.next(), "");
                 }
                 long end = System.currentTimeMillis();
@@ -39,7 +39,7 @@ public class FunctionTest {
         try {
             while (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
                 executor.shutdown();
-                assertThat(map.size()).isEqualTo(100 * 100);
+                assertThat(map.size()).isEqualTo(100 * 10000);
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);

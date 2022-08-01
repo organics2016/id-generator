@@ -8,10 +8,7 @@ import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
@@ -77,12 +74,25 @@ public class SnowflakeGenerator implements Generator {
 
             long currentTimestamp = System.currentTimeMillis();
             if (currentTimestamp <= lastTimestamp) {
-                log.warn("System time may be wrong. The current timestamp is {}, id generate last timestamp is {} with {} ms difference",
-                        currentTimestamp,
-                        lastTimestamp,
-                        lastTimestamp - currentTimestamp);
+
+                long diff = lastTimestamp - currentTimestamp;
+
+                if (diff > 1000) {
+                    log.error("System time may be wrong. The current timestamp is {}, id generate last timestamp is {} with {} ms difference",
+                            currentTimestamp,
+                            lastTimestamp,
+                            diff);
+
+                    return lastTimestamp;
+                } else {
+                    log.warn("System time may be wrong. The current timestamp is {}, id generate last timestamp is {} with {} ms difference",
+                            currentTimestamp,
+                            lastTimestamp,
+                            diff);
+                }
 
                 currentTimestamp = lastTimestamp + 1;
+
             }
 
             for (long s = 0; s < num && s < maxSequence; s++) {
@@ -107,8 +117,11 @@ public class SnowflakeGenerator implements Generator {
                 synchronized (this) {
                     id = transferQueue.poll();
                     if (id == null) {
-                        singleThreadExecutor.submit(() -> generate(100));
-                        id = transferQueue.take();
+                        singleThreadExecutor.submit(() -> generate((int) maxSequence));
+                        id = transferQueue.poll(1, TimeUnit.SECONDS);
+                        if (id == null) {
+                            throw new RuntimeException("Generate id timeout!");
+                        }
                     }
                 }
 
@@ -117,7 +130,7 @@ public class SnowflakeGenerator implements Generator {
             return id;
 
         } catch (InterruptedException e) {
-            singleThreadExecutor.shutdown();
+//            singleThreadExecutor.shutdown();
             throw new RuntimeException(e);
         }
     }

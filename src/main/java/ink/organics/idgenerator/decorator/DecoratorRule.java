@@ -1,4 +1,4 @@
-package ink.organics.lina.decorator;
+package ink.organics.idgenerator.decorator;
 
 import java.io.Serializable;
 

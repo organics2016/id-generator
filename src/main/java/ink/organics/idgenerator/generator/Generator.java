@@ -1,4 +1,4 @@
-package ink.organics.lina.generator;
+package ink.organics.idgenerator.generator;
 
 
 public interface Generator {

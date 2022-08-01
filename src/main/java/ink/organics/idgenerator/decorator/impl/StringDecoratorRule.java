@@ -1,7 +1,7 @@
-package ink.organics.lina.decorator.impl;
+package ink.organics.idgenerator.decorator.impl;
 
 
-import ink.organics.lina.decorator.DecoratorRule;
+import ink.organics.idgenerator.decorator.DecoratorRule;
 import lombok.Builder;
 
 

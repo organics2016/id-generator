@@ -1,6 +1,6 @@
-package ink.organics.lina.generator.impl;
+package ink.organics.idgenerator.generator.impl;
 
-import ink.organics.lina.generator.Generator;
+import ink.organics.idgenerator.generator.Generator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;

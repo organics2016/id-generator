@@ -1,8 +1,8 @@
-import ink.organics.lina.IDGenerator;
-import ink.organics.lina.IDGeneratorManager;
-import ink.organics.lina.decorator.Decorator;
-import ink.organics.lina.decorator.impl.StringDecoratorRule;
-import ink.organics.lina.generator.impl.SnowflakeGenerator;
+import ink.organics.idgenerator.IDGenerator;
+import ink.organics.idgenerator.IDGeneratorManager;
+import ink.organics.idgenerator.decorator.Decorator;
+import ink.organics.idgenerator.decorator.impl.StringDecoratorRule;
+import ink.organics.idgenerator.generator.impl.SnowflakeGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

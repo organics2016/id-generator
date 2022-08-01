@@ -1,4 +1,4 @@
-package ink.organics.lina;
+package ink.organics.idgenerator;
 
 public class IDGenerator {
 

@@ -1,9 +1,9 @@
-package ink.organics.lina;
+package ink.organics.idgenerator;
 
 
-import ink.organics.lina.decorator.Decorator;
-import ink.organics.lina.decorator.DecoratorRule;
-import ink.organics.lina.generator.Generator;
+import ink.organics.idgenerator.decorator.Decorator;
+import ink.organics.idgenerator.decorator.DecoratorRule;
+import ink.organics.idgenerator.generator.Generator;
 
 import java.util.Arrays;
 import java.util.Map;

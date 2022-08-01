@@ -1,4 +1,4 @@
-package ink.organics.lina.redis;
+package ink.organics.idgenerator.redis;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

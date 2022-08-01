@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ink.organics</groupId>
-    <artifactId>lina</artifactId>
-    <version>2.1</version>
+    <artifactId>id-generator</artifactId>
+    <version>3.0.0</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -15,13 +15,6 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -71,7 +64,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.3.2</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -114,27 +107,29 @@
     </distributionManagement>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <url>https://github.com/organics2016/Lina</url>
+    <url>https://github.com/organics2016/id-generator</url>
     <description>A simple and efficient ordered ID generator</description>
 
     <licenses>
         <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
         </license>
     </licenses>
 
     <developers>
         <developer>
-            <name>WangHanchao</name>
+            <name>organics2016</name>
             <email>organics2015@outlook.com</email>
-            <timezone>+8</timezone>
+            <organization>organics2016</organization>
+            <organizationUrl>https://github.com/organics2016/id-generator</organizationUrl>
         </developer>
     </developers>
+
     <scm>
-        <connection>scm:git:https://github.com/organics2016/Lina.git</connection>
-        <developerConnection>scm:git:https://github.com/organics2016/Lina.git</developerConnection>
-        <url>https://github.com/organics2016/Lina</url>
+        <connection>scm:git:git://github.com/organics2016/id-generator.git</connection>
+        <developerConnection>scm:git:ssh://github.com:organics2016/id-generator.git</developerConnection>
+        <url>https://github.com/organics2016/id-generator</url>
     </scm>
 
 </project>

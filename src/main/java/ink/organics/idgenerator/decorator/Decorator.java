@@ -1,6 +1,6 @@
-package ink.organics.lina.decorator;
+package ink.organics.idgenerator.decorator;
 
-import ink.organics.lina.generator.Generator;
+import ink.organics.idgenerator.generator.Generator;
 import lombok.Builder;
 import lombok.Getter;
 

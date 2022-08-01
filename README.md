@@ -57,6 +57,7 @@ public class ApplicationConfiguration {
 ```java
 import ink.organics.idgenerator.generator.Generator;
 
+@SpringBootTest
 public class SpringTest {
 
     @Autowired

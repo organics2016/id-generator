@@ -10,8 +10,7 @@ The new version is doing the final test case, the old version can [click here](.
 
 ## Profile
 
-A simple and efficient ordered ID generator,
-Can help you easily generate readable and beautiful business primary keys.<br>
+A simple and efficient ordered ID generator. Can help you easily generate readable and beautiful business primary keys.
 Especially when if you are suffering from complex framework configuration and many distributed coordination services,
 you can try it.
 

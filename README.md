@@ -16,9 +16,9 @@ you can try it.
 
 ## Feature
 
-- Complete Snowflake ID Implementation.
-- Clean configuration interface.
-- Can be independent of any service.
+- Complete [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID) Implementation
+- Clean configuration interface
+- Does not depend on any service
 - Support Java17
 
 ## Getting started

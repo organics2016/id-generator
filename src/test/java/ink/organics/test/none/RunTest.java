@@ -1,3 +1,5 @@
+package ink.organics.test.none;
+
 import ink.organics.idgenerator.IDGenerator;
 import ink.organics.idgenerator.IDGeneratorManager;
 import ink.organics.idgenerator.decorator.Decorator;
@@ -17,17 +19,10 @@ public class RunTest {
 
     @Test
     public void test() {
-        System.out.println(String.format("%064d", 41111));
     }
 
     @Test
     public void test1() {
-
-//        IDGeneratorManager.(
-//                new LinaConfig("ZCKP", new StringDecoratorRule().start(10000).autoComple(true).maxBit(10)),
-//                new LinaConfig("ZCZY", new StringDecoratorRule().start(10000).autoComple(true).maxBit(10)))
-////                .boot(new RedisCodeDao(new JedisConfig("192.168.0.99", 6379, "123456").getJedisPool()))
-//                .boot(new DefaultCodeDao(classpath));
 
         IDGeneratorManager.getInstance().init(
                 Decorator.builder()

@@ -1,66 +1,72 @@
-# Lian
+[maven-img]: https://img.shields.io/maven-central/v/ink.organics/id-generator
 
+[id-generator]: https://mvnrepository.com/artifact/ink.organics/id-generator
+
+[![][maven-img]][id-generator]
+
+# ID Generator
+
+The new version is doing the final test case, the old version can [click here](./README_LINA.md)
 
 ## Profile
 
 A simple and efficient ordered ID generator,
 Can help you easily generate readable and beautiful business primary keys.<br>
-Support Java8 and last
- 
+Especially when if you are suffering from complex framework configuration and many distributed coordination services,
+you can try it.
 
-## maven
+## Feature
 
-     <dependency>
-       <groupId>ink.organics</groupId>
-       <artifactId>lina</artifactId>
-       <version>2.1</version>
-     </dependency>
-     
-## A simple example
+- Complete Snowflake ID Implementation.
+- Clean configuration interface.
+- Can be independent of any service.
+- Support Java17
 
-- Initialize some DecoratorRule during program loading. like in spring
+## Getting started
 
-        @Bean
-        public LinaConsole linaConsole() {
-        
-            return new LinaConsole().init(
-                    new LinaConfig("TA", new TimeStampRule().prefix("TAA")),
-                    new LinaConfig("TB", new TimeStampRule())
-            ).boot(new TimeStampCodeDao());
-            
-        }
+- Step1. Add this dependency to your `pom.xml`
 
-- You can get ID anywhere
+```xml
 
-        String id = LinaServer.nextCode("TA");
-        
+<dependency>
+    <groupId>ink.organics</groupId>
+    <artifactId>id-generator</artifactId>
+    <version>3.0.0</version>
+</dependency>
+```
 
+- Step2. Initialize a generator. like in the Spring
 
-## Detail
+```java
+import ink.organics.idgenerator.generator.Generator;
+import ink.organics.idgenerator.generator.impl.SnowflakeGenerator;
 
-### LinaConfig
+@Configuration
+public class ApplicationConfiguration {
+    @Bean
+    public Generator idGenerator() {
+        return SnowflakeGenerator.build(
+                "server_1",      // Current service identifier
+                List.of("server_1", "server_2")); // All services identifier
+    }
+}
+```
 
-LinaConfig 实例用于描述 "规则" 与 "规则key"的对应关系.类似于 Map<String,Rule> <br>
-在获取ID时，需要明确规则的key。未被初始化的key是不容许的。
+- Step3. Use it anywhere.
 
-    String id = LinaServer.nextCode("Rule_Key");
+```java
+import ink.organics.idgenerator.generator.Generator;
 
-       
-### CodeDao
+public class SpringTest {
 
-在部分情况下需要一个外部存储，在程序重启后Lina会尝试访问这些外部存储，以便获取程序终止前输出的最大有序ID，以保证程序重启后获取的ID不会重复<br>
-因此，错误的CodeDao配置有可能导致组件无法正常工作或生成的有序ID重复<br>
+    @Autowired
+    private Generator generator;
 
-CodeDao 有三种默认的实现，可以根据业务不同选择
+    @Test
+    public void test1() {
+        long id = generator.next();
 
-- DefaultCodeDao<br>
-
-默认的CodeDao实现，组件会将使用过的ID序列化到本地磁盘.
-    
-- RedisCodeDao<br>
-    
-组件会将使用过的ID序列化到Redis.
-
-- TimeStampCodeDao<br>
-
-组件不依赖外部存储，而依赖当前运行环境的系统时间(修改系统时间会生成重复的ID).
+        assertThat(id).isGreaterThan(76976953847971840L);
+    }
+}
+```

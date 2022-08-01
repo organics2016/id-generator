@@ -56,7 +56,7 @@ public class ApplicationConfiguration {
     - First parameter. **You need to ensure that the current service identifier is globally unique in your cluster. More
       precisely, it is unique among all JVM processes in the cluster.**
     - Second parameter. **You need to ensure that List's elements and the order of the elements are the same
-      in all services, and the maximum number cannot exceed 1023.**
+      in all services, and the maximum size cannot exceed 1023.**
     - E.g The same code in different processes.
 
 ```java

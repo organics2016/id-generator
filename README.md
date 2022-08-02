@@ -14,7 +14,7 @@
 
 # ID Generator
 
-The new version is doing the final test case, the old version can [click here](./README_LINA.md)
+The old version can [click here](./README_LINA.md)
 
 ## Profile
 

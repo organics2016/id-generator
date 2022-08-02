@@ -15,7 +15,7 @@ public class RedisGenerator implements Generator {
 
     private final JedisPool jedisPool;
 
-    private final String currentInstance;
+    private final String currentServiceId;
 
 
     public <R> R redisHandler(Handler<R> jedisHandler) {
@@ -31,6 +31,6 @@ public class RedisGenerator implements Generator {
 
     @Override
     public long next() {
-        return this.redisHandler(jedis -> jedis.incr(currentInstance));
+        return this.redisHandler(jedis -> jedis.incr(currentServiceId));
     }
 }

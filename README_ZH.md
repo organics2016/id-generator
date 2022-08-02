@@ -12,27 +12,23 @@
 [![][maven-img]][id-generator]
 [![][downloads-img]][github]
 
-The old version can [click here](./README_LINA.md)
-
 ### [English](./README.md) | [中文](./README_ZH.md)
 
 # ID Generator
 
-A simple and efficient ordered ID generator, can help you easily generate readable and beautiful business primary keys.
-Especially when if you are suffering from complex framework configuration and many distributed coordination services,
-you can try it.
+一个简单高效的有序 ID 生成器，可以帮助您轻松生成可读且美观的业务主键。尤其是当您遇到复杂的框架配置和许多分布式协调服务时，您可以试试看这个。
 
 ## Feature
 
-- Complete [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID) Implementation
-- Breaking through the concurrency limit that Snowflake ID can only generate 4095 valid IDs in 1 millisecond.
-- Clean configuration interface
-- Does not depend on any service
-- Support Java17
+- 完备的雪花ID实现 [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID)
+- 突破雪花ID在 1 毫秒内只能生成 4095 个有效ID的并发限制。
+- 干净的配置接口
+- 不依赖任何服务
+- 支持Java17
 
 ## Getting started
 
-- Step1. Add this dependency to your `pom.xml`
+- Step1. 添加这个dependency到 `pom.xml`
 
 ```xml
 
@@ -43,7 +39,7 @@ you can try it.
 </dependency>
 ```
 
-- Step2. Initialize a generator. like in the Spring.
+- Step2. 初始化一个Generator。例如像在Spring中
 
 ```java
 import ink.organics.idgenerator.generator.Generator;
@@ -60,12 +56,10 @@ public class ApplicationConfiguration {
 }
 ```
 
-- You need to pay attention
-    - First parameter. **You need to ensure that the current service identifier is globally unique in your cluster. More
-      precisely, it is unique among all JVM processes in the cluster.**
-    - Second parameter. **You need to ensure that List's elements and the order of the elements are the same
-      in all services, and the maximum size cannot exceed 1023.**
-    - E.g The same code in different processes.
+- 你需要注意
+    - 第一个参数. **您需要确保 当前服务标识ID 在集群中是全局唯一的。更准确说，在集群中的所有JVM进程中是唯一的。**
+    - 第二个参数. **需要保证List的元素和元素的顺序在所有服务中是一致的，最大不能超过1023。**
+    - 例如 相同的代码在不同的进程中
 
 ```java
 
@@ -93,7 +87,7 @@ public class ApplicationConfiguration {
 }
 ```
 
-- Step3. Use it anywhere.
+- Step3. 可以在任何地方使用
 
 ```java
 import ink.organics.idgenerator.generator.Generator;
@@ -115,9 +109,9 @@ public class SpringTest {
 
 ## More Details
 
-### The numbers are so ugly. I need more meaningful ids.
+### 数字太丑了我需要更有意义的 ID
 
-1. Initialize some decorator. like in the Spring.
+1. 初始化一些Decorator。例如像在Spring中
 
 ```java
 import ink.organics.idgenerator.IDGeneratorManager;
@@ -148,7 +142,7 @@ public class ApplicationConfiguration {
 }
 ```
 
-2. Use it anywhere.
+2. 可以在任何地方使用
 
 ```java
 import ink.organics.idgenerator.IDGenerator;
@@ -169,9 +163,9 @@ public class SpringDemoTest {
 
 ---
 
-### Integrate with Spring Data JPA
+### 集成到 Spring Data JPA
 
-1. Initialize a generator
+1. 初始化一个Generator
 
 ```java
 
@@ -189,7 +183,7 @@ public class ApplicationConfiguration {
 }
 ```
 
-2. Create a Hibernate IdentifierGenerator
+2. 创建一个 Hibernate IdentifierGenerator
 
 ```java
 import ink.organics.idgenerator.IDGenerator;
@@ -207,7 +201,7 @@ public class MyGenerator implements IdentifierGenerator {
 }
 ```
 
-3. Use it to your entity
+3. 在你的Entity上使用
 
 ```java
 
@@ -225,7 +219,7 @@ public class User extends BaseEntity {
 }
 ```
 
-4. Test it.
+4. 试试看
 
 ```java
 
@@ -250,15 +244,13 @@ public class SpringDemoTest {
 
 ## Q&A
 
-- Can it be used without Spring?
-- Yes, just initialize in the right place.
+- 没有Spring可以用吗？
+- 是的，只需在正确的位置初始化即可。
   <br>
   <br>
-- Why I need to maintain service list and service identifier?
-- It is difficult to guarantee unique without registration service, but most systems not need to introduce complex
-  registration service. In either case, we want to leave the choice to the user.
+- 为什么我需要维护服务列表和服务标识ID？
+- 没有注册中心很难保证唯一性，但大多数系统不需要引入复杂的注册中心。无论哪种情况，我们都希望将选择权留给用户。
   <br>
   <br>
-- How do breaking through the concurrency limit?
-- When more than 4095 IDs are generated in 1 millisecond, the program will borrow the next 1 millisecond, and it will
-  not exceed 1 second.
+- 怎样突破并发限制？
+- 当 1 毫秒内产生超过 4095 个 ID 时，程序会借用下一 1 毫秒，不会超过 1 秒。

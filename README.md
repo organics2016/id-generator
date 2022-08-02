@@ -107,7 +107,7 @@ public class SpringTest {
 
 ## More Details
 
-- The numbers are so ugly. I need more meaningful ids.
+#### The numbers are so ugly. I need more meaningful ids.
 
 1. Initialize some decorator. like in the Spring.
 
@@ -155,6 +155,85 @@ public class SpringDemoTest {
 
         String generatorId_2 = IDGenerator.nextToString("generatorId_2");
         assertThat(generatorId_2).endsWith("WWW");
+    }
+}
+```
+
+#### Integrate with Spring Data JPA
+
+1. Initialize a generator
+
+```java
+
+@Configuration
+public class ApplicationConfiguration {
+    @Bean
+    public IDGeneratorManager idGeneratorManager() {
+        return IDGeneratorManager.getInstance().init(
+                Decorator.builder()     // Build a decorator
+                        .generatorId("generatorId_1")  //  The decorator need a id
+                        .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
+                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Set some rules
+                        .build());
+    }
+}
+```
+
+2. Create a Hibernate IdentifierGenerator
+
+```java
+import ink.organics.idgenerator.IDGenerator;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
+import org.hibernate.id.IdentifierGenerator;
+
+import java.io.Serializable;
+
+public class MyGenerator implements IdentifierGenerator {
+    @Override
+    public Serializable generate(SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException {
+        return IDGenerator.nextToString("generatorId_1");
+    }
+}
+```
+
+3. Use it to your entity
+
+```java
+
+@Data
+@Entity(name = "user_t")
+public class User extends BaseEntity {
+
+    @Id
+    @GeneratedValue(generator = "my-generator")
+    @GenericGenerator(name = "my-generator", strategy = "com.example.MyGenerator")
+    private String id;
+    private String name;
+    private Integer age;
+    private String email;
+}
+```
+
+4. Test it.
+
+```java
+
+@SpringBootTest
+public class SpringDemoTest {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Test
+    public void test3() {
+        User user = new User();
+        userRepository.saveAndFlush(user);
+
+        userRepository.findAll().forEach(user1 -> {
+            System.out.println(user.getId());
+            assertThat(user1.getId()).startsWith("QQQ");
+        });
     }
 }
 ```

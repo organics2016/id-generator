@@ -14,9 +14,8 @@ import javax.persistence.Id;
 public class User extends BaseEntity {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDHexGenerator")
-    @Column(columnDefinition = "char", length = 32)
+    @GeneratedValue(generator = "my-generator")
+    @GenericGenerator(name = "my-generator", strategy = "ink.organics.test.spring.model.generator.MyGenerator")
     private String id;
     private String name;
     private Integer age;

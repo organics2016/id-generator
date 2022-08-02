@@ -1,4 +1,4 @@
-package ink.organics.test.none;
+package ink.organics.test;
 
 import ink.organics.idgenerator.generator.impl.SnowflakeGenerator;
 import org.junit.jupiter.api.Test;

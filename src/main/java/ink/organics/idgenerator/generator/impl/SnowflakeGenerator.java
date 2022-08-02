@@ -86,7 +86,7 @@ public class SnowflakeGenerator implements Generator {
         return INSTANCE_MAP.computeIfAbsent(currentServiceId, (key) -> new SnowflakeGenerator(key, allServiceId, getIdTimeout));
     }
 
-    private void generate(final int num) {
+    private void generate(final long num) {
         this.lastTimestamp.updateAndGet((lastTimestamp -> {
 
             long currentTimestamp = System.currentTimeMillis();
@@ -127,7 +127,7 @@ public class SnowflakeGenerator implements Generator {
                     // 上锁之后再次尝试获取，其他线程可能已生产完成
                     id = transferQueue.poll();
                     if (id == null) {
-                        singleThreadExecutor.submit(() -> generate((int) maxSequence));
+                        singleThreadExecutor.submit(() -> generate(maxSequence));
                         id = transferQueue.poll(getIdTimeout, TimeUnit.MILLISECONDS);
                         if (id == null) {
                             // 没有ID应该超时 使上层事务结束

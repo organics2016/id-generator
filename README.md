@@ -1,8 +1,11 @@
 [maven-img]: https://img.shields.io/maven-central/v/ink.organics/id-generator
+
 [license-img]: https://img.shields.io/github/license/organics2016/id-generator
+
 [downloads-img]: https://img.shields.io/github/downloads/organics2016/id-generator/total
 
 [github]: https://github.com/organics2016/id-generator
+
 [id-generator]: https://mvnrepository.com/artifact/ink.organics/id-generator
 
 [![][license-img]][github]
@@ -36,7 +39,7 @@ you can try it.
 <dependency>
     <groupId>ink.organics</groupId>
     <artifactId>id-generator</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
 </dependency>
 ```
 

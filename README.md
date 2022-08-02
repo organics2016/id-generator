@@ -1,8 +1,13 @@
 [maven-img]: https://img.shields.io/maven-central/v/ink.organics/id-generator
+[license-img]: https://img.shields.io/github/license/organics2016/id-generator
+[downloads-img]: https://img.shields.io/github/downloads/organics2016/id-generator/total
 
+[github]: https://github.com/organics2016/id-generator
 [id-generator]: https://mvnrepository.com/artifact/ink.organics/id-generator
 
+[![][license-img]][github]
 [![][maven-img]][id-generator]
+[![][downloads-img]][github]
 
 # ID Generator
 
@@ -107,7 +112,7 @@ public class SpringTest {
 
 ## More Details
 
-#### The numbers are so ugly. I need more meaningful ids.
+### The numbers are so ugly. I need more meaningful ids.
 
 1. Initialize some decorator. like in the Spring.
 
@@ -159,7 +164,9 @@ public class SpringDemoTest {
 }
 ```
 
-#### Integrate with Spring Data JPA
+---
+
+### Integrate with Spring Data JPA
 
 1. Initialize a generator
 

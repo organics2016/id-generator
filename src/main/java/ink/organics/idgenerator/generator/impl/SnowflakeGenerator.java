@@ -45,7 +45,7 @@ public class SnowflakeGenerator implements Generator {
 
 
     private SnowflakeGenerator(String currentServiceId, Collection<String> allServiceId, long getIdTimeout) {
-        List<String> all = allServiceId.stream().distinct().sorted().toList();
+        List<String> all = allServiceId.stream().distinct().toList();
 
         if (all.size() != allServiceId.size()) {
             throw new IllegalArgumentException("Services identifier list has repeating!");

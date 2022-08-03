@@ -15,9 +15,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FunctionTest {
 
+    @Test
+    public void test(){
+        System.out.println(~(-1L << 10));
+    }
+
 
     @Test
-    public void test() {
+    public void test2() {
 
         SnowflakeGenerator snowflakes = SnowflakeGenerator.build("s6", List.of("s1", "s2", "s3", "s4", "s5", "s6"));
 

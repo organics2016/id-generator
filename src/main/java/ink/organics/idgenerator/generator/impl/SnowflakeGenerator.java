@@ -127,7 +127,7 @@ public class SnowflakeGenerator implements Generator {
                     // 上锁之后再次尝试获取，其他线程可能已生产完成
                     id = transferQueue.poll();
                     if (id == null) {
-                        singleThreadExecutor.submit(() -> generate(maxSequence));
+                        generate(maxSequence);
                         id = transferQueue.poll(getIdTimeout, TimeUnit.MILLISECONDS);
                         if (id == null) {
                             // 没有ID应该超时 使上层事务结束

@@ -43,7 +43,7 @@ public class SnowflakeGenerator implements Generator {
 
     private final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 
-
+    //TODO  这种方式依赖上层注册服务。无法处理服务漂移，动态扩容等的问题
     private SnowflakeGenerator(String currentServiceId, Collection<String> allServiceId, long getIdTimeout) {
         List<String> all = allServiceId.stream().distinct().toList();
 

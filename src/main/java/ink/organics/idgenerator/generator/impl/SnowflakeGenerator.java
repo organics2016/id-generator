@@ -70,7 +70,7 @@ public class SnowflakeGenerator implements Generator {
     private static final Map<String, SnowflakeGenerator> INSTANCE_MAP = new ConcurrentHashMap<>();
 
     public static SnowflakeGenerator build(String currentServiceId, List<String> allServiceId) {
-        return INSTANCE_MAP.computeIfAbsent(currentServiceId, (key) -> new SnowflakeGenerator(key, allServiceId, 2000));
+        return build(currentServiceId, allServiceId, 2000);
     }
 
     /**

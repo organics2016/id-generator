@@ -44,10 +44,10 @@ public class SnowflakeGenerator implements Generator {
     private final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 
 
-    private SnowflakeGenerator(String currentServiceId, Collection<String> allInstance, long getIdTimeout) {
-        List<String> all = allInstance.stream().distinct().sorted().toList();
+    private SnowflakeGenerator(String currentServiceId, Collection<String> allServiceId, long getIdTimeout) {
+        List<String> all = allServiceId.stream().distinct().sorted().toList();
 
-        if (all.size() != allInstance.size()) {
+        if (all.size() != allServiceId.size()) {
             throw new IllegalArgumentException("Services identifier list has repeating!");
         }
 
@@ -69,8 +69,8 @@ public class SnowflakeGenerator implements Generator {
 
     private static final Map<String, SnowflakeGenerator> INSTANCE_MAP = new ConcurrentHashMap<>();
 
-    public static SnowflakeGenerator build(String currentServiceId, List<String> allInstance) {
-        return INSTANCE_MAP.computeIfAbsent(currentServiceId, (key) -> new SnowflakeGenerator(key, allInstance, 2000));
+    public static SnowflakeGenerator build(String currentServiceId, List<String> allServiceId) {
+        return INSTANCE_MAP.computeIfAbsent(currentServiceId, (key) -> new SnowflakeGenerator(key, allServiceId, 2000));
     }
 
     /**

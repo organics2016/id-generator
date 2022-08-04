@@ -19,13 +19,8 @@ public class RedisGenerator implements Generator {
 
 
     public <R> R redisHandler(Handler<R> jedisHandler) {
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        try (Jedis jedis = jedisPool.getResource()) {
             return jedisHandler.handler(jedis);
-        } finally {
-            if (jedis != null)
-                jedis.close();
         }
     }
 

@@ -4,6 +4,12 @@ import ink.organics.idgenerator.generator.impl.SnowflakeGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.bind.DatatypeConverter;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -14,13 +20,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FunctionTest {
 
     @Test
-    public void test() {
-        System.out.println(Long.toBinaryString(-1L));
-        System.out.println(~(-1L << 10));
-        System.out.println(Long.toBinaryString(Long.parseLong("111111111111", 2)));
-        System.out.println(Long.parseLong("0111111111111111111111111111111111111111111111111111111111111111", 2));
+    public void test() throws NoSuchAlgorithmException {
+//        System.out.println(Long.toBinaryString(-1L));
+//        System.out.println(~(-1L << 10));
+//        System.out.println(Long.toBinaryString(Long.parseLong("111111111111", 2)));
+//        System.out.println(Long.parseLong("0111111111111111111111111111111111111111111111111111111111111111", 2));
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        for (int i = 0; i < 1023; i++) {
+            md.update(("server" + i).getBytes(StandardCharsets.UTF_8));
+//            System.out.println(DatatypeConverter.printHexBinary(md.digest()));
+            System.out.println(new BigInteger(1, md.digest()).toString(16));
+        }
     }
-
 
     @Test
     public void test2() {

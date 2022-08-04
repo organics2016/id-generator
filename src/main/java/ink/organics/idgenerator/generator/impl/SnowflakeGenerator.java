@@ -1,14 +1,23 @@
 package ink.organics.idgenerator.generator.impl;
 
 import ink.organics.idgenerator.generator.Generator;
+import ink.organics.idgenerator.utils.DigestUtils;
 import lombok.extern.slf4j.Slf4j;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.params.SetParams;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
@@ -37,14 +46,15 @@ public class SnowflakeGenerator implements Generator {
 
     private final long getIdTimeout;
 
-    private final AtomicLong lastTimestamp = new AtomicLong(0);
+    private final AtomicLong lastTimestamp = new AtomicLong(-1);
 
     private final LinkedTransferQueue<Long> transferQueue = new LinkedTransferQueue<>();
 
-    private final ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 
-    //TODO  这种方式依赖上层注册服务。无法处理服务漂移，动态扩容等的问题
     private SnowflakeGenerator(String currentServiceId, Collection<String> allServiceId, long getIdTimeout) {
+        this.jedisPool = null;
+        this.scheduledExecutorService = null;
+
         List<String> all = allServiceId.stream().distinct().toList();
 
         if (all.size() != allServiceId.size()) {
@@ -59,7 +69,7 @@ public class SnowflakeGenerator implements Generator {
             if (currentServiceId.equals(all.get(i))) {
                 this.instanceId = i;
                 this.getIdTimeout = getIdTimeout;
-                lastTimestamp.set(-1);
+                this.lastTimestamp.set(-1);
                 return;
             }
         }
@@ -67,10 +77,68 @@ public class SnowflakeGenerator implements Generator {
         throw new IllegalArgumentException("Not found " + currentServiceId + "in the services identifier list!");
     }
 
+
+    private final String redisKeyPrefix = "serviceID-";
+
+
+    private final long redisKeyKeepAliveTime = 60 * 1000;
+
+
+    private final long redisKeyRefreshTime = 50 * 1000;
+
+
+    private final JedisPool jedisPool;
+
+    private final ScheduledExecutorService scheduledExecutorService;
+
+    private SnowflakeGenerator(String redisUrl, long getIdTimeout) {
+        JedisPoolConfig config = new JedisPoolConfig();
+        config.setTestOnBorrow(true);
+        this.jedisPool = new JedisPool(config, redisUrl);
+
+        try (Jedis jedis = this.jedisPool.getResource()) {
+            for (int i = 0; i < maxInstanceId; i++) {
+                byte[] key = DigestUtils.sha256(redisKeyPrefix + i);
+
+                String result = jedis.set(key, new byte[]{1},
+                        SetParams.setParams().nx().px(redisKeyKeepAliveTime));
+
+                if ("OK".equals(result)) {
+                    this.instanceId = i;
+                    this.getIdTimeout = getIdTimeout;
+                    this.lastTimestamp.set(-1);
+                    this.scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
+                    this.scheduledExecutorService.scheduleWithFixedDelay(this::keepAlive, redisKeyRefreshTime, redisKeyRefreshTime, TimeUnit.MILLISECONDS);
+                    return;
+                }
+            }
+        }
+
+        throw new IllegalArgumentException("Not found in the services identifier list!");
+    }
+
+    private void keepAlive() {
+        try (Jedis jedis = this.jedisPool.getResource()) {
+            byte[] key = DigestUtils.sha256(this.redisKeyPrefix + this.instanceId);
+            String result = jedis.set(key, new byte[]{1},
+                    SetParams.setParams().px(redisKeyKeepAliveTime));
+
+            if (!"OK".equals(result)) {
+                log.error("Generator ID can't keep alive");
+            }
+        }
+    }
+
     private static final Map<String, SnowflakeGenerator> INSTANCE_MAP = new ConcurrentHashMap<>();
+
+    private static Type INIT_TYPE;
 
     public static SnowflakeGenerator build(String currentServiceId, List<String> allServiceId) {
         return build(currentServiceId, allServiceId, 2000);
+    }
+
+    public static SnowflakeGenerator build(String redisUrl) {
+        return build(redisUrl, 2000);
     }
 
     /**
@@ -83,8 +151,23 @@ public class SnowflakeGenerator implements Generator {
      * @return Return a SnowflakeGenerator instance
      */
     public static SnowflakeGenerator build(String currentServiceId, List<String> allServiceId, long getIdTimeout) {
+        if (INIT_TYPE == null) {
+            INIT_TYPE = Type.DEFAULT;
+        } else if (!INIT_TYPE.equals(Type.DEFAULT)) {
+            throw new IllegalArgumentException(SnowflakeGenerator.class.getName() + " has been initialized with " + INIT_TYPE);
+        }
         return INSTANCE_MAP.computeIfAbsent(currentServiceId, (key) -> new SnowflakeGenerator(key, allServiceId, getIdTimeout));
     }
+
+    public static SnowflakeGenerator build(String redisUrl, long getIdTimeout) {
+        if (INIT_TYPE == null) {
+            INIT_TYPE = Type.REDIS;
+        } else if (!INIT_TYPE.equals(Type.REDIS)) {
+            throw new IllegalArgumentException(SnowflakeGenerator.class.getName() + " has been initialized with " + INIT_TYPE);
+        }
+        return INSTANCE_MAP.computeIfAbsent(redisUrl, (key) -> new SnowflakeGenerator(redisUrl, getIdTimeout));
+    }
+
 
     private void generate(final long num) {
         this.lastTimestamp.updateAndGet((lastTimestamp -> {
@@ -142,5 +225,10 @@ public class SnowflakeGenerator implements Generator {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private enum Type {
+        DEFAULT,
+        REDIS
     }
 }

@@ -52,11 +52,11 @@ public class SnowflakeGenerator implements Generator {
 
     // ---
 
-    private final String redisKeyPrefix = "serviceID-";
+    private final String redisKeyPrefix = "service-";
 
-    private final long redisKeyKeepAliveTime = 60 * 1000;
+    private final long redisKeyKeepAliveTime = 10 * 60 * 1000;
 
-    private final long redisKeyRefreshTime = 50 * 1000;
+    private final long redisKeyRefreshTime = 2 * 60 * 1000;
 
     private final JedisPool jedisPool;
 
@@ -115,6 +115,7 @@ public class SnowflakeGenerator implements Generator {
         throw new IllegalArgumentException("Not found in the services identifier list!");
     }
 
+    // TODO redis 挂掉怎么办
     private void keepAlive() {
         try (Jedis jedis = this.jedisPool.getResource()) {
             byte[] key = DigestUtils.sha256(this.redisKeyPrefix + this.instanceId);

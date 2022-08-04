@@ -50,6 +50,17 @@ public class SnowflakeGenerator implements Generator {
 
     private final LinkedTransferQueue<Long> transferQueue = new LinkedTransferQueue<>();
 
+    // ---
+
+    private final String redisKeyPrefix = "serviceID-";
+
+    private final long redisKeyKeepAliveTime = 60 * 1000;
+
+    private final long redisKeyRefreshTime = 50 * 1000;
+
+    private final JedisPool jedisPool;
+
+    private final ScheduledExecutorService scheduledExecutorService;
 
     private SnowflakeGenerator(String currentServiceId, Collection<String> allServiceId, long getIdTimeout) {
         this.jedisPool = null;
@@ -77,19 +88,6 @@ public class SnowflakeGenerator implements Generator {
         throw new IllegalArgumentException("Not found " + currentServiceId + "in the services identifier list!");
     }
 
-
-    private final String redisKeyPrefix = "serviceID-";
-
-
-    private final long redisKeyKeepAliveTime = 60 * 1000;
-
-
-    private final long redisKeyRefreshTime = 50 * 1000;
-
-
-    private final JedisPool jedisPool;
-
-    private final ScheduledExecutorService scheduledExecutorService;
 
     private SnowflakeGenerator(String redisUrl, long getIdTimeout) {
         JedisPoolConfig config = new JedisPoolConfig();

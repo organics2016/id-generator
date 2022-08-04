@@ -54,6 +54,7 @@ public class SnowflakeGenerator implements Generator {
 
     private final String redisKeyPrefix = "service-";
 
+    // TODO serverless 情况下怎么办
     private final long redisKeyKeepAliveTime = 10 * 60 * 1000;
 
     private final long redisKeyRefreshTime = 2 * 60 * 1000;

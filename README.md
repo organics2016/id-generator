@@ -288,7 +288,7 @@ public class SpringDemoTest {
   registration service. If you have many services or need dynamic scaling, you can create a Redis-based Generator as
   follows.
 
-- Note: You can only choose one.
+- **Note: You can only choose one.**
 
 1. Simple, does not depend on any service, does not support dynamic scaling. Suitable for where the number of servers is
    fixed and relatively small.

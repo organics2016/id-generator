@@ -26,8 +26,8 @@ you can try it.
 
 - Complete [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID) Implementation
 - Breaking through the concurrency limit that Snowflake ID can only generate 4095 valid IDs in 1 millisecond.
-- Clean configuration interface
-- Does not depend on any service
+- Clean configuration interface.
+- Option to not depend on any service.
 - Support Java17
 
 ## Getting Started

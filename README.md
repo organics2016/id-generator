@@ -120,6 +120,10 @@ public class SpringTest {
 1. Find a place to initialize.
 
 ```java
+import ink.organics.idgenerator.IDGeneratorManager;
+import ink.organics.idgenerator.decorator.Decorator;
+import ink.organics.idgenerator.generator.impl.SnowflakeGenerator;
+
 public class ApplicationConfiguration {
 
     public void initIdGeneratorManager() {
@@ -135,6 +139,7 @@ public class ApplicationConfiguration {
 2. Use it anywhere.
 
 ```java
+import ink.organics.idgenerator.generator.Generator;
 
 public class DemoTest {
     @Test
@@ -294,7 +299,7 @@ public class SpringDemoTest {
 SnowflakeGenerator.build("server_1", List.of("server_1", "server_2"));
 ```
 
-2. High level, Requires Redis. Suitable for container drift or dynamic scaling.
+2. High level, Requires Redis. Suitable for container drift or dynamic scaling. E.g Kubernetes | Docker | Serverless
 
 ```
 // "redis://:password@host:port/database"
@@ -304,6 +309,7 @@ SnowflakeGenerator.build("redis://127.0.0.1:6379/0");
 
 ---
 
-- How do breaking through the concurrency limit?
+### How do breaking through the concurrency limit?
+
 - When more than 4095 IDs are generated in 1 millisecond, the program will borrow the next 1 millisecond, and it will
   not exceed 1 second.

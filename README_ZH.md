@@ -23,10 +23,10 @@
 - 完备的雪花ID实现 [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID)
 - 突破雪花ID在 1 毫秒内只能生成 4095 个有效ID的并发限制。
 - 干净的配置接口
-- 不依赖任何服务
+- 可选择不依赖任何服务
 - 支持Java17
 
-## Getting started
+## Getting Started
 
 - Step1. 添加这个dependency到 `pom.xml`
 
@@ -107,11 +107,48 @@ public class SpringTest {
 }
 ```
 
-## More Details
+## Q&A
 
-### 数字太丑了我需要更有意义的 ID
+### @Autowired 太麻烦了, 并且我也没有Spring
 
-1. 初始化一些Decorator。例如像在Spring中
+1. 找个地方初始化
+
+```java
+import ink.organics.idgenerator.IDGeneratorManager;
+import ink.organics.idgenerator.decorator.Decorator;
+import ink.organics.idgenerator.generator.impl.SnowflakeGenerator;
+
+public class ApplicationConfiguration {
+
+    public void initIdGeneratorManager() {
+        IDGeneratorManager.getInstance()
+                .init(Decorator.builder()     // Build a decorator
+                        .generatorId("generatorId_1")  //  The decorator need a id
+                        .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
+                        .build());
+    }
+}
+```
+
+2. 在任何地方使用.
+
+```java
+import ink.organics.idgenerator.generator.Generator;
+
+public class DemoTest {
+    @Test
+    public void test2() {
+        long id = IDGenerator.next("generatorId_1"); // Need decorator id
+        assertThat(id).isGreaterThan(76976953847971840L);
+    }
+}
+```
+
+---
+
+### 数字太丑了我需要更有意义的 ID.
+
+1. 初始化一些 Decorator.
 
 ```java
 import ink.organics.idgenerator.IDGeneratorManager;
@@ -120,16 +157,14 @@ import ink.organics.idgenerator.decorator.impl.StringDecoratorRule;
 import ink.organics.idgenerator.generator.Generator;
 import ink.organics.idgenerator.generator.impl.SnowflakeGenerator;
 
-@Configuration
 public class ApplicationConfiguration {
 
-    @Bean
-    public IDGeneratorManager idGeneratorManager() {
-        return IDGeneratorManager.getInstance().init(
+    public void initIdGeneratorManager() {
+        IDGeneratorManager.getInstance().init(
                 Decorator.builder()     // Build a decorator
                         .generatorId("generatorId_1")  //  The decorator need a id
                         .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
-                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Set some rules
+                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Optional. Set some rules
                         .build(),
 
                 Decorator.builder()
@@ -142,14 +177,13 @@ public class ApplicationConfiguration {
 }
 ```
 
-2. 可以在任何地方使用
+2. 在任何地方使用.
 
 ```java
 import ink.organics.idgenerator.IDGenerator;
 import ink.organics.idgenerator.generator.Generator;
 
-@SpringBootTest
-public class SpringDemoTest {
+public class DemoTest {
     @Test
     public void test2() {
         String generatorId_1 = IDGenerator.nextToString("generatorId_1");
@@ -165,7 +199,7 @@ public class SpringDemoTest {
 
 ### 集成到 Spring Data JPA
 
-1. 初始化一个Generator
+1. 初始化 Generator
 
 ```java
 
@@ -173,17 +207,17 @@ public class SpringDemoTest {
 public class ApplicationConfiguration {
     @Bean
     public IDGeneratorManager idGeneratorManager() {
-        return IDGeneratorManager.getInstance().init(
-                Decorator.builder()     // Build a decorator
+        return IDGeneratorManager.getInstance()
+                .init(Decorator.builder()     // Build a decorator
                         .generatorId("generatorId_1")  //  The decorator need a id
                         .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
-                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Set some rules
+                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Optional. Set some rules
                         .build());
     }
 }
 ```
 
-2. 创建一个 Hibernate IdentifierGenerator
+2. 创建 Hibernate IdentifierGenerator
 
 ```java
 import ink.organics.idgenerator.IDGenerator;
@@ -201,7 +235,7 @@ public class MyGenerator implements IdentifierGenerator {
 }
 ```
 
-3. 在你的Entity上使用
+3. 将其用于您的实体.
 
 ```java
 
@@ -219,7 +253,7 @@ public class User extends BaseEntity {
 }
 ```
 
-4. 试试看
+4. 试一下.
 
 ```java
 
@@ -242,15 +276,31 @@ public class SpringDemoTest {
 }
 ```
 
-## Q&A
+---
 
-- 没有Spring可以用吗？
-- 是的，只需在正确的位置初始化即可。
-  <br>
-  <br>
-- 为什么我需要维护服务列表和服务标识ID？
-- 没有注册中心很难保证唯一性，但大多数系统不需要引入复杂的注册中心。无论哪种情况，我们都希望将选择权留给用户。
-  <br>
-  <br>
-- 怎样突破并发限制？
+### 为什么我需要维护服务列表和服务标识？
+
+- 没有注册中心很难保证唯一性，但大多数系统不需要引入复杂的注册中心。如果您有很多服务或需要动态扩容，您可以创建一个基于
+  Redis 的 Generator，如下所示。
+
+- 注意：您只能选择一项。
+
+1. 简单，不依赖任何服务，不支持动态伸缩。适用于服务器数量固定且相对较少的情况。
+
+```
+SnowflakeGenerator.build("server_1", List.of("server_1", "server_2"));
+```
+
+2. 高级的，需要Redis。适用于容器漂移或动态扩容. E.g Kubernetes | Docker | Serverless
+
+```
+// "redis://:password@host:port/database"
+
+SnowflakeGenerator.build("redis://127.0.0.1:6379/0");
+```
+
+---
+
+### 怎样突破并发限制？
+
 - 当 1 毫秒内产生超过 4095 个 ID 时，程序会借用下一 1 毫秒，不会超过 1 秒。

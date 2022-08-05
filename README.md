@@ -30,7 +30,7 @@ you can try it.
 - Does not depend on any service
 - Support Java17
 
-## Getting started
+## Getting Started
 
 - Step1. Add this dependency to your `pom.xml`
 
@@ -113,11 +113,43 @@ public class SpringTest {
 }
 ```
 
-## More Details
+## Q&A
+
+### @Autowired is too troublesome, and I don't have Spring.
+
+1. Find a place to initialize.
+
+```java
+public class ApplicationConfiguration {
+
+    public void initIdGeneratorManager() {
+        IDGeneratorManager.getInstance()
+                .init(Decorator.builder()     // Build a decorator
+                        .generatorId("generatorId_1")  //  The decorator need a id
+                        .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
+                        .build());
+    }
+}
+```
+
+2. Use it anywhere.
+
+```java
+
+public class DemoTest {
+    @Test
+    public void test2() {
+        long id = IDGenerator.next("generatorId_1"); // Need decorator id
+        assertThat(id).isGreaterThan(76976953847971840L);
+    }
+}
+```
+
+---
 
 ### The numbers are so ugly. I need more meaningful ids.
 
-1. Initialize some decorator. like in the Spring.
+1. Initialize some decorator.
 
 ```java
 import ink.organics.idgenerator.IDGeneratorManager;
@@ -126,16 +158,14 @@ import ink.organics.idgenerator.decorator.impl.StringDecoratorRule;
 import ink.organics.idgenerator.generator.Generator;
 import ink.organics.idgenerator.generator.impl.SnowflakeGenerator;
 
-@Configuration
 public class ApplicationConfiguration {
 
-    @Bean
-    public IDGeneratorManager idGeneratorManager() {
-        return IDGeneratorManager.getInstance().init(
+    public void initIdGeneratorManager() {
+        IDGeneratorManager.getInstance().init(
                 Decorator.builder()     // Build a decorator
                         .generatorId("generatorId_1")  //  The decorator need a id
                         .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
-                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Set some rules
+                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Optional. Set some rules
                         .build(),
 
                 Decorator.builder()
@@ -154,8 +184,7 @@ public class ApplicationConfiguration {
 import ink.organics.idgenerator.IDGenerator;
 import ink.organics.idgenerator.generator.Generator;
 
-@SpringBootTest
-public class SpringDemoTest {
+public class DemoTest {
     @Test
     public void test2() {
         String generatorId_1 = IDGenerator.nextToString("generatorId_1");
@@ -179,11 +208,11 @@ public class SpringDemoTest {
 public class ApplicationConfiguration {
     @Bean
     public IDGeneratorManager idGeneratorManager() {
-        return IDGeneratorManager.getInstance().init(
-                Decorator.builder()     // Build a decorator
+        return IDGeneratorManager.getInstance()
+                .init(Decorator.builder()     // Build a decorator
                         .generatorId("generatorId_1")  //  The decorator need a id
                         .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
-                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Set some rules
+                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Optional. Set some rules
                         .build());
     }
 }
@@ -248,17 +277,32 @@ public class SpringDemoTest {
 }
 ```
 
-## Q&A
+---
 
-- Can it be used without Spring?
-- Yes, just initialize in the right place.
-  <br>
-  <br>
-- Why I need to maintain service list and service identifier?
+### Why I need to maintain service list and service identifier?
+
 - It is difficult to guarantee unique without registration service, but most systems not need to introduce complex
-  registration service. In either case, we want to leave the choice to the user.
-  <br>
-  <br>
+  registration service. If you have many services or need dynamic scaling, you can create a Redis-based Generator as
+  follows.
+
+- Note: You can only choose one.
+
+1. Simple, does not depend on any service, does not support dynamic scaling. Suitable for where the number of servers is
+   fixed and relatively small.
+
+```
+SnowflakeGenerator.build("server_1", List.of("server_1", "server_2"));
+```
+
+2. High level, Requires Redis. Suitable for container drift or dynamic scaling.
+
+```
+// "redis://:password@host:port/database"
+SnowflakeGenerator.build("redis://127.0.0.1:6379/0");
+```
+
+---
+
 - How do breaking through the concurrency limit?
 - When more than 4095 IDs are generated in 1 millisecond, the program will borrow the next 1 millisecond, and it will
   not exceed 1 second.

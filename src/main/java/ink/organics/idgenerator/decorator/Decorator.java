@@ -1,5 +1,6 @@
 package ink.organics.idgenerator.decorator;
 
+import ink.organics.idgenerator.decorator.impl.StringDecoratorRule;
 import ink.organics.idgenerator.generator.Generator;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,8 +15,8 @@ public class Decorator {
     private final String generatorId;
 
     private final Generator generator;
-
-    private final DecoratorRule decoratorRule;
+    @Builder.Default
+    private final DecoratorRule decoratorRule = StringDecoratorRule.builder().build();
 
     public long next() {
         return generator.next();

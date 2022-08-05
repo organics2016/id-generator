@@ -22,18 +22,19 @@ public class ApplicationConfiguration {
 
     @Bean
     public IDGeneratorManager idGeneratorManager() {
-        return IDGeneratorManager.getInstance().init(
-                Decorator.builder()     // Build a decorator
-                        .generatorId("generatorId_1")  //  The decorator need a id
-                        .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
-                        .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Set some rules
-                        .build(),
+        return IDGeneratorManager.getInstance()
+                .init(
+                        Decorator.builder()     // Build a decorator
+                                .generatorId("generatorId_1")  //  The decorator need a id
+                                .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
+                                .decoratorRule(StringDecoratorRule.builder().prefix("QQQ").autoComplete(true).build())  //  Set some rules
+                                .build(),
 
-                Decorator.builder()
-                        .generatorId("generatorId_2")
-                        .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
-                        .decoratorRule(StringDecoratorRule.builder().postfix("WWW").autoComplete(false).build())
-                        .build()
-        );
+                        Decorator.builder()
+                                .generatorId("generatorId_2")
+                                .generator(SnowflakeGenerator.build("server_1", List.of("server_1", "server_2")))
+                                .decoratorRule(StringDecoratorRule.builder().postfix("WWW").autoComplete(false).build())
+                                .build()
+                );
     }
 }

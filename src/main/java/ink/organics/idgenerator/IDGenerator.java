@@ -13,7 +13,7 @@ public class IDGenerator {
     }
 
     private static void check() {
-        if (!generatorManager.isInit())
+        if (generatorManager == null || !generatorManager.isInit())
             throw new RuntimeException("IDGeneratorManager is not init");
     }
 

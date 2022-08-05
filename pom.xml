@@ -64,6 +64,18 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/PerformanceTest.java</exclude>
+                        <exclude>**/DemoTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
             <!-- 源码插件配置 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -22,20 +22,11 @@ public class SpringDemoTest {
         assertThat(id).isGreaterThan(76976953847971840L);
     }
 
-    @Test
-    public void test2() {
-        String generatorId_1 = IDGenerator.nextToString("generatorId_1");
-        assertThat(generatorId_1).startsWith("QQQ");
-
-        String generatorId_2 = IDGenerator.nextToString("generatorId_2");
-        assertThat(generatorId_2).endsWith("WWW");
-    }
-
     @Autowired
     private UserRepository userRepository;
 
     @Test
-    public void test3() {
+    public void test2() {
         User user = new User();
         userRepository.saveAndFlush(user);
 

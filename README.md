@@ -16,7 +16,7 @@
 
 # ID Generator
 
-A simple and efficient ordered ID generator, can help you easily generate readable and beautiful business primary keys.
+A simple and efficient order ID generator, can help you easily generate readable and beautiful business primary keys.
 Especially when if you are suffering from complex framework configuration and many distributed coordination services,
 you can try it.
 

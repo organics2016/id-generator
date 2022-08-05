@@ -12,8 +12,6 @@
 [![][maven-img]][id-generator]
 [![][downloads-img]][github]
 
-The old version can [click here](./README_LINA.md)
-
 ### [English](./README.md) | [中文](./README_ZH.md)
 
 # ID Generator

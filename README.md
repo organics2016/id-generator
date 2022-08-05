@@ -298,6 +298,7 @@ SnowflakeGenerator.build("server_1", List.of("server_1", "server_2"));
 
 ```
 // "redis://:password@host:port/database"
+
 SnowflakeGenerator.build("redis://127.0.0.1:6379/0");
 ```
 

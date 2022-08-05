@@ -57,7 +57,7 @@ public class SnowflakeGenerator implements Generator {
     // TODO serverless 情况下怎么办
     private final long redisKeyKeepAliveTime = 10 * 60 * 1000;
 
-    private final long redisKeyRefreshTime = 2 * 60 * 1000;
+    private final long redisKeyRefreshTime = 60 * 1000;
 
     private final JedisPool jedisPool;
 
@@ -113,10 +113,9 @@ public class SnowflakeGenerator implements Generator {
             }
         }
 
-        throw new IllegalArgumentException("Not found in the services identifier list!");
+        throw new RuntimeException("Service identifier has been exhausted waiting for Redis to be released!");
     }
 
-    // TODO redis 挂掉怎么办
     private void keepAlive() {
         try (Jedis jedis = this.jedisPool.getResource()) {
             byte[] key = DigestUtils.sha256(this.redisKeyPrefix + this.instanceId);
@@ -124,8 +123,11 @@ public class SnowflakeGenerator implements Generator {
                     SetParams.setParams().px(redisKeyKeepAliveTime));
 
             if (!"OK".equals(result)) {
-                log.error("Generator ID can't keep alive");
+                throw new RuntimeException("Service identifier refreshed fail.");
             }
+        } catch (Exception e) {
+            // 无论任何异常，都不能终止定时任务，尝试修复服务标识。
+            log.error("Generator ID can't keep alive : ", e);
         }
     }
 

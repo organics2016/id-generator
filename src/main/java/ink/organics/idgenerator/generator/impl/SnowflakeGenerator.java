@@ -208,14 +208,15 @@ public class SnowflakeGenerator implements Generator {
 
             Long id = transferQueue.poll();
             if (id == null) {
+                // 这个锁是保证一个生成器在同一时刻只有一个线程可生成ID，获取ID本身不需要锁，由Queue保证性能和线程安全
                 synchronized (this) {
                     // 上锁之后再次尝试获取，其他线程可能已生产完成
                     id = transferQueue.poll();
                     if (id == null) {
                         generate(maxSequence);
                         id = transferQueue.poll(getIdTimeout, TimeUnit.MILLISECONDS);
+                        // 当ID被其他线程瞬间消费后，这里任然有可能拿不到，应该终止当前线程操作，使上层事务结束
                         if (id == null) {
-                            // 没有ID应该超时 使上层事务结束
                             throw new RuntimeException("Generate id timeout!");
                         }
                     }
